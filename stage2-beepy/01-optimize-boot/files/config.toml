@@ -1,0 +1,9 @@
+[ssh]
+enabled = true
+
+[wlan]
+country = "us"
+
+[locale]
+keymap = "us"
+timezone = "America/Los_Angeles"

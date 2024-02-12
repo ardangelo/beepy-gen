@@ -1,0 +1,29 @@
+--- /boot/config.txt	2024-02-11 11:56:58.000000000 -0600
++++ /boot/config.txt	2024-02-11 11:32:36.594236018 -0600
+@@ -7,6 +7,13 @@
+ #dtparam=i2s=on
+ #dtparam=spi=on
+ 
++# Cutdown firmware for faster boot
++gpu_mem=16
++start_file=start_cd.elf
++fixup_file=fixup_cd.dat
++initial_turbo=30
++boot_delay=0
++
+ # Enable audio (loads snd_bcm2835)
+ dtparam=audio=on
+ 
+@@ -14,10 +21,10 @@
+ # /boot/firmware/overlays/README
+ 
+ # Automatically load overlays for detected cameras
+-camera_auto_detect=1
++# camera_auto_detect=1
+ 
+ # Automatically load overlays for detected DSI displays
+-display_auto_detect=1
++# display_auto_detect=1
+ 
+ # Automatically load initramfs files, if found
+ auto_initramfs=1

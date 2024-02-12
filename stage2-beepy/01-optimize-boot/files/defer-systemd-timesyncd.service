@@ -1,0 +1,10 @@
+[Unit]
+Description=Load systemd-timesyncd
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl start systemd-timesyncd
+
+[Install]
+WantedBy=post-boot.target

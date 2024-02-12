@@ -1,0 +1,12 @@
+[Unit]
+Description=Load brcmfmac Kernel Module
+DefaultDependencies=no
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/modprobe brcmfmac
+
+[Install]
+WantedBy=post-boot.target
