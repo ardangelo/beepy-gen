@@ -7,7 +7,6 @@ patch "${ROOTFS_DIR}/boot/firmware/cmdline.txt" files/cmdline.patch
 # Install post-boot services
 install -m 755 files/config.toml    "${ROOTFS_DIR}/boot/"
 install -m 644 files/post-boot.target	"${ROOTFS_DIR}/etc/systemd/system/"
-install -m 644 files/defer-systemd-timesyncd.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/load-brcmfmac.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 755 files/blacklist-brcmfmac.conf	"${ROOTFS_DIR}/etc/modprobe.d/"
 
