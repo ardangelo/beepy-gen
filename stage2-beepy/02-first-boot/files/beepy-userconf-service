@@ -11,6 +11,10 @@ ExecStart=
 ExecStart=-/sbin/agetty --autologin $FIRST_USER --noclear %I \$TERM
 EOF
 
+# Add quiet flag to cmdline
+sed -i 's/rootwait/quiet rootwait/' \
+	/boot/firmware/cmdline.txt
+
 systemctl daemon-reload ||:
 systemctl disable raspi-config
 reboot

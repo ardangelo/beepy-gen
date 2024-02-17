@@ -8,7 +8,13 @@ patch "${ROOTFS_DIR}/boot/firmware/cmdline.txt" files/cmdline.patch
 install -m 755 files/config.toml    "${ROOTFS_DIR}/boot/"
 install -m 644 files/post-boot.target	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/load-brcmfmac.service	"${ROOTFS_DIR}/etc/systemd/system/"
+install -m 644 files/disable-cursor-blink.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 755 files/blacklist-brcmfmac.conf	"${ROOTFS_DIR}/etc/modprobe.d/"
+
+
+# Set terminal type for monochrome
+echo "if [ -z \"$SSH_CLIENT\" ]; then export TERM=xterm-old; fi" \
+	>> ${ROOTFS_DIR}/etc/skel/.profile
 
 on_chroot << EOF
 
@@ -57,6 +63,7 @@ for trg in \$POST_BOOT_TARGETS; do
 done
 systemctl enable systemd-timesyncd
 systemctl enable load-brcmfmac
+systemctl enable disable-cursor-blink
 
 # Disable assorted blocking services
 systemctl disable rc-local

@@ -1,0 +1,10 @@
+[Unit]
+Description=Disable cursor blinking
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c "echo 0 > /sys/class/graphics/fbcon/cursor_blink"
+
+[Install]
+WantedBy=post-boot.target
