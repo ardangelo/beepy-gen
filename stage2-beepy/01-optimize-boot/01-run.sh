@@ -38,12 +38,15 @@ sed -i 's/WantedBy=sysinit.target/WantedBy=network-online.target/' \
 sed -i 's/Before=time-set.target sysinit.target shutdown.target/Before=time-set.target shutdown.target/' \
 	/lib/systemd/system/systemd-timesyncd.service
 
+# Remove network user lookup service as prerequisite for login
 sed -i 's/After=remote-fs.target nss-user-lookup.target network.target home.mount/After=home.mount/' \
 	/lib/systemd/system/systemd-user-sessions.service
-
-# Disable rc.local
-systemctl disable rc-local
-chmod -x /etc/rc.local
+sed -i 's/After=nss-user-lookup.target user.slice modprobe@drm.service/After=user.slice modprobe@drm.service/' \
+	/lib/systemd/system/systemd-logind.service
+sed -i 's/After=remote-fs.target nss-user-lookup.target network.target home.mount/After=home.mount/' \
+	/lib/systemd/system/systemd-user-sessions.service
+sed -i 's/After=nss-user-lookup.target user.slice modprobe@drm.service/After=user.slice modprobe@drm.service/' \
+	/lib/systemd/system/dbus-org.freedesktop.login1.service
 
 # Enable post-boot services
 for srv in \$POST_BOOT_SERVICES; do
@@ -54,5 +57,10 @@ for trg in \$POST_BOOT_TARGETS; do
 done
 systemctl enable systemd-timesyncd
 systemctl enable load-brcmfmac
+
+# Disable assorted blocking services
+systemctl disable rc-local
+chmod -x /etc/rc.local
+systemctl disable nss-user-lookup.target
 
 EOF

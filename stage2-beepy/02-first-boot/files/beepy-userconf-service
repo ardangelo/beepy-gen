@@ -1,0 +1,16 @@
+#!/bin/sh -e
+
+# Run initial setup
+/usr/lib/userconf-pi/userconf-service
+
+# Enable autologin
+FIRST_USER="$(getent passwd 1000 | cut -d: -f1)"
+cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin $FIRST_USER --noclear %I \$TERM
+EOF
+
+systemctl daemon-reload ||:
+systemctl disable raspi-config
+reboot
