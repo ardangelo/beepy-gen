@@ -22,10 +22,6 @@ apt-get install -y \
 	beepy-fw beepy-kbd sharp-drm beepy-symbol-overlay \
 	tmux beepy-tmux-menus beepy-gomuks
 
-# Configure default display cutoff
-sed -i 's/^sharp-drm$/sharp-drm mono_cutoff=32/' \
-	/etc/modules
-
 # Add Beepy hardware group
 groupadd beepy_fw
 
