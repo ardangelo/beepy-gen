@@ -1,7 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
 
 # Run initial setup
-/usr/lib/userconf-pi/userconf-service
+if ! /usr/lib/userconf-pi/userconf-service; then
+	echo "userconf-service failed, exiting Beepy initial setup"
+	exit 1
+fi
 
 # Enable autologin
 FIRST_USER="$(getent passwd 1000 | cut -d: -f1)"
@@ -12,14 +15,21 @@ ExecStart=-/sbin/agetty --autologin $FIRST_USER --noclear %I \$TERM
 EOF
 
 # Add user to beepy HW group
-groupadd beepy ||:
-usermod -aG beepy $FIRST_USER
+groupadd beepy_hw ||:
+usermod -aG beepy_hw $FIRST_USER
+
+# Copy default configs again
+su - $FIRST_USER -c "cp /etc/skel/.* ~/"
 
 # Add quiet flag to cmdline
 sed -i 's/rootwait/quiet rootwait/' \
 	/boot/firmware/cmdline.txt
 
-systemctl daemon-reload ||:
+# Expand root filesystem
+raspi-config --expand-rootfs
+
+# Disable raspi-config automatic service to save boot time
+systemctl daemon-reload
 systemctl disable raspi-config
 
 reboot
