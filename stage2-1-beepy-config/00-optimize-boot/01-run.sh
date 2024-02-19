@@ -11,10 +11,41 @@ install -m 644 files/load-brcmfmac.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/disable-cursor-blink.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 755 files/blacklist-brcmfmac.conf	"${ROOTFS_DIR}/etc/modprobe.d/"
 
+# Remove MOTD on login
+sed -i '/^session .* pam_motd\.so .*/s/^/# /' \
+	${ROOTFS_DIR}/etc/pam.d/login
 
-# Set terminal type for monochrome
-echo "if [ -z \"$SSH_CLIENT\" ]; then export TERM=xterm-old; fi" \
-	>> ${ROOTFS_DIR}/etc/skel/.profile
+# Populate default bash profile
+cat << EOF >> ${ROOTFS_DIR}/etc/skel/.profile
+# Run these commands when not logged on through SSH
+if [ -z "\$SSH_CLIENT" ]; then
+
+	# xterm-old can force some programs to render monochrome
+	export TERM=xterm-old
+
+	# Start tmux
+	if [ -z \$TMUX ]; then
+		tmux -u
+	fi
+fi
+EOF
+
+# Populate default tmux profile
+cat << EOF >> ${ROOTFS_DIR}/etc/skel/.tmux.conf
+# Keybinds
+bind-key b send-keys C-b
+bind-key C-b last-window
+bind-key e run-shell "/usr/share/beepy-tmux-menus/items/main.sh"
+
+# Status bar
+set -g status-position top
+set -g status-left ""
+set -g status-right "_ [#(cat /sys/firmware/beepy/battery_percent)] %H:%M"
+set -g status-interval 30
+set -g window-status-separator '_'
+set -g @menus_location_x 'R'
+set -g @menus_location_y 'T'
+EOF
 
 on_chroot << EOF
 
