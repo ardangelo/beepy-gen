@@ -18,12 +18,13 @@ EOF
 groupadd beepy_hw ||:
 usermod -aG beepy_hw $FIRST_USER
 
+# Configure driver to use HW group and add quiet flag
+HW_GID="$(getent group beepy_hw | cut -d: -f3)"
+sed -i "s/rootwait/quiet rootwait beepy-kbd.sysfs_gid=$HW_GID/" \
+	/boot/firmware/cmdline.txt
+
 # Copy default configs again
 su - $FIRST_USER -c "cp /etc/skel/.* ~/"
-
-# Add quiet flag to cmdline
-sed -i 's/rootwait/quiet rootwait/' \
-	/boot/firmware/cmdline.txt
 
 # Expand root filesystem
 raspi-config --expand-rootfs

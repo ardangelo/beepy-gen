@@ -4,13 +4,14 @@
 
 # Install additional utilities
 install -m 755 files/monoset "${ROOTFS_DIR}/usr/bin/"
-install -m 660 files/sys-firmware-beepy.conf "${ROOTFS_DIR}/etc/tmpfiles.d/"
 
 # Set default monochrome settings
-echo "alias sudo=\"sudo \"" \
-        >> ${ROOTFS_DIR}/etc/skel/.profile
-echo "alias nmtui=\"monoset 127 nmtui\"" \
-        >> ${ROOTFS_DIR}/etc/skel/.profile
+cat << EOF >> ${ROOTFS_DIR}/etc/skel/.profile
+
+# Start nmtui with a monochrome cutoff of 127
+alias sudo="sudo "
+alias nmtui="monoset 127 nmtui"
+EOF
 
 on_chroot << EOF
 
