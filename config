@@ -1,5 +1,6 @@
 IMG_NAME=Beepy
 RELEASE=bookworm
+
 LOCALE_DEFAULT=en_US.UTF-8
 TARGET_HOSTNAME=beepy
 KEYBOARD_KEYMAP=us
@@ -8,4 +9,6 @@ TIMEZONE_DEFAULT="America/Los_Angeles"
 FIRST_USER_NAME="beepy"
 FIRST_USER_PASS="beepbeep"
 ENABLE_SSH=1
+
 STAGE_LIST="stage0 stage1 stage2 stage2-0-beepy-drivers stage2-1-beepy-config"
+DEPLOY_COMPRESSION=none
