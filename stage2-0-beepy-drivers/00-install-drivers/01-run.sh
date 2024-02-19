@@ -15,15 +15,23 @@ EOF
 
 on_chroot << EOF
 
+# Add drivers repo
 curl -s --compressed "https://ardangelo.github.io/beepy-ppa/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/beepy.gpg >/dev/null
 curl -s --compressed -o /etc/apt/sources.list.d/beepy.list "https://ardangelo.github.io/beepy-ppa/beepy.list"
+
+# Add log2ram repo
+echo "deb http://packages.azlux.fr/debian/ bookworm main" | sudo tee /etc/apt/sources.list.d/azlux.list
+curl -s https://azlux.fr/repo.gpg.key | sudo apt-key add -
+
+# Update repos
 apt-get update
 
+# Install drivers and log2ram
 apt-get install -y \
-	beepy-fw beepy-kbd sharp-drm beepy-symbol-overlay \
-	tmux beepy-tmux-menus beepy-gomuks
+	beepy-fw beepy-kbd sharp-drm beepy-symbol-overlay log2ram
 
-# Add Beepy hardware group
-groupadd beepy_fw
+# Install userspace
+apt-get install -y \
+	git tmux beepy-tmux-menus beepy-gomuks
 
 EOF

@@ -15,6 +15,12 @@ install -m 755 files/blacklist-brcmfmac.conf	"${ROOTFS_DIR}/etc/modprobe.d/"
 sed -i '/^session .* pam_motd\.so .*/s/^/# /' \
 	${ROOTFS_DIR}/etc/pam.d/login
 
+# Run log2ram sync in background
+sed -i '/^\s*rsync/ s/$/ \&/' \
+	${ROOTFS_DIR}/usr/local/bin/log2ram
+sed -i 's/^MAIL=true$/MAIL=false/' \
+	${ROOTFS_DIR}/etc/log2ram.conf
+
 # Populate default bash profile
 cat << EOF >> ${ROOTFS_DIR}/etc/skel/.profile
 # Run these commands when not logged on through SSH
