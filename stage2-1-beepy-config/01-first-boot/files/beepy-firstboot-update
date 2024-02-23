@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Set up terminal
+VT="$(tty | sed 's|/dev/tty||')"
+ORIG_VT="1"
+if [ -t 0 ]; then
+    chvt "$VT"
+fi
+
+FW_VER_PATH="/sys/firmware/beepy/fw_version"
+SHUTDOWN_GRACE_PATH="/sys/module/beepy_kbd/parameters/shutdown_grace"
+
+# Exit if disabled
+if ! grep -qPzo '\[fw_update\]\nenabled = true' /boot/config.toml; then
+	exit 0
+fi
+
+# Check for version path
+if [ ! -f "$FW_VER_PATH" ]; then
+	whiptail --infobox "beepy-kbd driver not loaded, skipping firmware check" 20 40
+	sleep 5
+	exit 0
+fi
+
+# Get installed firmware version
+IFS=. read -r dev_major dev_minor <<< $(cat $FW_VER_PATH)
+
+# Find the newest installed firmware (should only be one version)
+for upd_path in /usr/lib/beepy-firmware/beepy_*.hex; do
+	IFS=. read -r upd_major upd_minor ext <<< $(basename $upd_path | cut -d '_' -f 2)
+done
+
+# Get shutdown grace
+SHUTDOWN_GRACE="some"
+if [ -f $SHUTDOWN_GRACE_PATH ]; then
+	SHUTDOWN_GRACE=$(cat $SHUTDOWN_GRACE_PATH)
+fi
+
+# Update firmware if available
+if [ $dev_major -lt $upd_major ] || ( [ $dev_major -eq $upd_major ] && [ $dev_minor -lt $upd_minor ] ); then
+
+	whiptail --infobox "Updating firmware from $dev_major.$dev_minor to $upd_major.$upd_minor in 5 seconds." 20 40
+	sleep 5
+	whiptail --infobox "Updating firmware from $dev_major.$dev_minor to $upd_major.$upd_minor." 20 40
+
+	if /sbin/update-beepy-fw $upd_path; then
+		whiptail --infobox "Update successful. Please wait until system reboots in $SHUTDOWN_GRACE seconds." 20 40
+		sleep $SHUTDOWN_GRACE
+	else
+		whiptail --infobox "Update failed. Configuration will continue." 20 40
+		sleep 5
+	fi
+fi
+
+chvt "$ORIG_VT"

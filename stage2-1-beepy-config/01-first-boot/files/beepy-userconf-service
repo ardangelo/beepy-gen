@@ -33,4 +33,6 @@ raspi-config --expand-rootfs
 systemctl daemon-reload
 systemctl disable raspi-config
 
+# Update firmware if required
+/usr/lib/userconf-pi/beepy-firstboot-update
 reboot

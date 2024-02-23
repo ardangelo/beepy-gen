@@ -7,6 +7,7 @@ sed -i 's@ExecStart=/usr/lib/userconf-pi/userconf-service@ExecStart=/usr/lib/use
 # Install first-boot services
 install -m 755 files/post-boot-target.sh    "${ROOTFS_DIR}/etc/profile.d/"
 install -m 755 files/beepy-userconf-service    "${ROOTFS_DIR}/usr/lib/userconf-pi/"
+install -m 755 files/beepy-firstboot-update    "${ROOTFS_DIR}/usr/lib/userconf-pi/"
 
 # Resize for smaller screen
 for path in \

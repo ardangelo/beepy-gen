@@ -7,3 +7,6 @@ country = "us"
 [locale]
 keymap = "us"
 timezone = "America/Los_Angeles"
+
+[fw_update]
+enabled = true
