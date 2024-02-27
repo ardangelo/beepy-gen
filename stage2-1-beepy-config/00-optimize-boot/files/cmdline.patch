@@ -2,5 +2,5 @@
 +++ /boot/cmdline.txt	2024-02-11 11:32:40.519294532 -0600
 @@ -1 +1,2 @@
 -console=serial0,115200 console=tty1 root=ROOTDEV rootfstype=ext4 fsck.repair=yes rootwait quiet init=/usr/lib/raspberrypi-sys-mods/firstboot console=tty2 fbcon=font:VGA8x8 fbcon=map:10
-+console=serial0,115200 console=tty1 root=ROOTDEV rootfstype=ext4 fsck.mode=skip quiet logo.nologo rootwait init=/usr/lib/raspberrypi-sys-mods/firstboot console=tty2 fbcon=font:VGA8x8 fbcon=map:10
++console=serial0,115200 console=tty1 root=ROOTDEV rootfstype=ext4 fsck.mode=skip quiet logo.nologo rootwait init=/usr/lib/raspberrypi-sys-mods/firstboot loglevel=0 rd.systemd.show_status=false udev.log_level=0 udev.log_priority=0 rd.plymouth=0 plymouth.enable=0 plymouth.ignore-serial-consoles fbcon=font:VGA8x8 fbcon=map:10
 +

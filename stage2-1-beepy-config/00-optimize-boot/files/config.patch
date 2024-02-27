@@ -1,6 +1,6 @@
 --- /boot/config.txt	2024-02-11 11:56:58.000000000 -0600
 +++ /boot/config.txt	2024-02-11 11:32:36.594236018 -0600
-@@ -7,6 +7,13 @@
+@@ -7,6 +7,14 @@
  #dtparam=i2s=on
  #dtparam=spi=on
  
@@ -10,11 +10,12 @@
 +fixup_file=fixup_cd.dat
 +initial_turbo=30
 +boot_delay=0
++disable_splash=1
 +
  # Enable audio (loads snd_bcm2835)
  dtparam=audio=on
  
-@@ -14,10 +21,10 @@
+@@ -14,10 +22,10 @@
  # /boot/firmware/overlays/README
  
  # Automatically load overlays for detected cameras

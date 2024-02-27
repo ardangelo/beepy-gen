@@ -8,6 +8,7 @@ patch "${ROOTFS_DIR}/boot/firmware/cmdline.txt" files/cmdline.patch
 install -m 755 files/config.toml    "${ROOTFS_DIR}/boot/"
 install -m 644 files/post-boot.target	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/load-brcmfmac.service	"${ROOTFS_DIR}/etc/systemd/system/"
+install -m 644 files/mount-boot.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/disable-cursor-blink.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 755 files/blacklist-brcmfmac.conf	"${ROOTFS_DIR}/etc/modprobe.d/"
 
@@ -20,6 +21,10 @@ sed -i '/^\s*rsync/ s/$/ \&/' \
 	${ROOTFS_DIR}/usr/local/bin/log2ram
 sed -i 's/^MAIL=true$/MAIL=false/' \
 	${ROOTFS_DIR}/etc/log2ram.conf
+
+# Start getty immediately
+sed -i 's/Type=idle/Type=simple/' \
+	${ROOTFS_DIR}/lib/systemd/system/getty@.service
 
 # Populate default bash profile
 cat << EOF >> ${ROOTFS_DIR}/etc/skel/.profile
@@ -55,7 +60,7 @@ EOF
 
 on_chroot << EOF
 
-export POST_BOOT_SERVICES="avahi-daemon ModemManager networking NetworkManager sshswitch wpa_supplicant ssh"
+export POST_BOOT_SERVICES="avahi-daemon ModemManager networking NetworkManager sshswitch wpa_supplicant ssh dphys-swapfile triggerhappy"
 export POST_BOOT_TARGETS="nfs-client remote-fs"
 
 # Remove from multi-user target
@@ -100,11 +105,13 @@ for trg in \$POST_BOOT_TARGETS; do
 done
 systemctl enable systemd-timesyncd
 systemctl enable load-brcmfmac
+systemctl enable mount-boot
 systemctl enable disable-cursor-blink
 
 # Disable assorted blocking services
 systemctl disable rc-local
 chmod -x /etc/rc.local
 systemctl disable nss-user-lookup.target
+systemctl disable sshswitch
 
 EOF

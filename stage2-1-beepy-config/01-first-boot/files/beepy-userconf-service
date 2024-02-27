@@ -11,7 +11,7 @@ FIRST_USER="$(getent passwd 1000 | cut -d: -f1)"
 cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --autologin $FIRST_USER --noclear %I \$TERM
+ExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin excel --noclear %I $TERM
 EOF
 
 # Add user to beepy HW group
@@ -28,6 +28,10 @@ su - $FIRST_USER -c "cp /etc/skel/.* ~/"
 
 # Expand root filesystem
 raspi-config --expand-rootfs
+
+# Disable remounting of boot partition
+sed -i '/\/boot\/firmware/ s/^/# /' \
+	/etc/fstab
 
 # Disable raspi-config automatic service to save boot time
 systemctl daemon-reload
