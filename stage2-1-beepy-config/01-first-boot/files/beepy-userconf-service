@@ -1,17 +1,25 @@
 #!/bin/sh
 
+VT="$(tty | sed 's|/dev/tty||')"
+ORIG_VT="1"
+if [ -t 0 ]; then
+	chvt "$VT"
+fi
+
 # Run initial setup
 if ! /usr/lib/userconf-pi/userconf-service; then
 	echo "userconf-service failed, exiting Beepy initial setup"
+	chvt "$ORIG_VT"
 	exit 1
 fi
 
 # Enable autologin
+whiptail --infobox "Enabling auto-login for $FIRST_USER" 20 40
 FIRST_USER="$(getent passwd 1000 | cut -d: -f1)"
 cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin excel --noclear %I $TERM
+ExecStart=-/sbin/agetty --skip-login --nonewline --noissue --autologin $FIRST_USER --noclear %I $TERM
 EOF
 
 # Add user to beepy HW group
@@ -27,6 +35,7 @@ sed -i "s/rootwait/quiet rootwait beepy-kbd.sysfs_gid=$HW_GID/" \
 su - $FIRST_USER -c "cp /etc/skel/.* ~/"
 
 # Expand root filesystem
+whiptail --infobox "Expanding root filesystem to fill SD card" 20 40
 raspi-config --expand-rootfs
 
 # Disable remounting of boot partition
@@ -34,9 +43,11 @@ sed -i '/\/boot\/firmware/ s/^/# /' \
 	/etc/fstab
 
 # Disable raspi-config automatic service to save boot time
+whiptail --infobox "Optimizing boot services" 20 40
 systemctl daemon-reload
 systemctl disable raspi-config
 
 # Update firmware if required
 /usr/lib/userconf-pi/beepy-firstboot-update
+whiptail --infobox "Beepy set up complete, rebooting" 20 40
 reboot

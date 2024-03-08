@@ -12,6 +12,7 @@ SHUTDOWN_GRACE_PATH="/sys/module/beepy_kbd/parameters/shutdown_grace"
 
 # Exit if disabled
 if ! grep -qPzo '\[fw_update\]\nenabled = true' /boot/config.toml; then
+	chvt "$ORIG_VT"
 	exit 0
 fi
 
@@ -19,6 +20,7 @@ fi
 if [ ! -f "$FW_VER_PATH" ]; then
 	whiptail --infobox "beepy-kbd driver not loaded, skipping firmware check" 20 40
 	sleep 5
+	chvt "$ORIG_VT"
 	exit 0
 fi
 
