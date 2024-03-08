@@ -1,0 +1,11 @@
+[Unit]
+Description=Mount /boot/firmware
+
+[Mount]
+What=/dev/mmcblk0p1
+Where=/boot/firmware
+Type=vfat
+Options=defaults
+
+[Install]
+WantedBy=post-boot.target

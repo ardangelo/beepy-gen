@@ -50,4 +50,5 @@ systemctl disable raspi-config
 # Update firmware if required
 /usr/lib/userconf-pi/beepy-firstboot-update
 whiptail --infobox "Beepy set up complete, rebooting" 20 40
+chvt "$ORIG_VT"
 reboot

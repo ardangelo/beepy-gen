@@ -8,7 +8,7 @@ patch "${ROOTFS_DIR}/boot/firmware/cmdline.txt" files/cmdline.patch
 install -m 755 files/config.toml    "${ROOTFS_DIR}/boot/"
 install -m 644 files/post-boot.target	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/load-brcmfmac.service	"${ROOTFS_DIR}/etc/systemd/system/"
-install -m 644 files/mount-boot.service	"${ROOTFS_DIR}/etc/systemd/system/"
+install -m 644 files/boot-firmware.mount	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/disable-cursor-blink.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 755 files/blacklist-brcmfmac.conf	"${ROOTFS_DIR}/etc/modprobe.d/"
 
@@ -105,7 +105,7 @@ for trg in \$POST_BOOT_TARGETS; do
 done
 systemctl enable systemd-timesyncd
 systemctl enable load-brcmfmac
-systemctl enable mount-boot
+systemctl enable boot-firmware.mount
 systemctl enable disable-cursor-blink
 
 # Disable assorted blocking services
