@@ -32,6 +32,6 @@ apt-get install -y \
 
 # Install userspace
 apt-get install -y \
-	git tmux beepy-tmux-menus beepy-gomuks python3-pip
+	git tmux beepy-tmux-menus beepy-gomuks beepy-poll python3-pip
 
 EOF
