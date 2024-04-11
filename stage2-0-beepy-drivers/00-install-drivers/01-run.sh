@@ -11,6 +11,7 @@ cat << EOF >> ${ROOTFS_DIR}/etc/skel/.profile
 # Start nmtui with a monochrome cutoff of 127
 alias sudo="sudo "
 alias nmtui="monoset 127 nmtui"
+alias nmtui-connect="monoset 127 nmtui-connect"
 EOF
 
 on_chroot << EOF

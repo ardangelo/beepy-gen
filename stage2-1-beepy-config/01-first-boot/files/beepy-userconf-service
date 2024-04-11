@@ -34,6 +34,23 @@ sed -i "s/rootwait/quiet rootwait beepy-kbd.sysfs_gid=$HW_GID/" \
 # Copy default configs again
 su - $FIRST_USER -c "cp /etc/skel/.* ~/"
 
+# Add nmtui prompt to first boot
+cat > /etc/profile.d/zz-nmtui.sh << 'EOF'
+#!/bin/bash
+(
+echo "Waiting for NetworkManager..."
+for i in $(seq 1 5); do
+	if systemctl --quiet is-active NetworkManager; then
+		sudo monoset 127 nmtui-connect ||:
+		sudo rm -f /etc/profile.d/zz-nmtui.sh ||:
+		exit 0
+	fi
+	sleep 1
+done
+)
+EOF
+chmod +x /etc/profile.d/zz-nmtui.sh
+
 # Expand root filesystem
 whiptail --infobox "Expanding root filesystem to fill SD card" 20 40
 raspi-config --expand-rootfs
