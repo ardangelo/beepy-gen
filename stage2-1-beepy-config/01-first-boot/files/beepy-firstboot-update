@@ -43,7 +43,7 @@ if [ $dev_major -lt $upd_major ] || ( [ $dev_major -eq $upd_major ] && [ $dev_mi
 
 	whiptail --infobox "Updating firmware from $dev_major.$dev_minor to $upd_major.$upd_minor in 5 seconds." 20 40
 	sleep 5
-	whiptail --infobox "Updating firmware from $dev_major.$dev_minor to $upd_major.$upd_minor." 20 40
+	whiptail --infobox "Updating firmware from $dev_major.$dev_minor to $upd_major.$upd_minor. After shutdown, please wait until system reboots in $SHUTDOWN_GRACE seconds." 20 40
 
 	if /sbin/update-beepy-fw $upd_path; then
 		whiptail --infobox "Update successful. Please wait until system reboots in $SHUTDOWN_GRACE seconds." 20 40
