@@ -34,10 +34,39 @@ sed -i "s/rootwait/quiet rootwait beepy-kbd.sysfs_gid=$HW_GID/" \
 # Copy default configs again
 su - $FIRST_USER -c "cp /etc/skel/.* ~/"
 
-# Add nmtui prompt to first boot
+# Add interactive setup to first boot
 cat > /etc/profile.d/zz-nmtui.sh << 'EOF'
 #!/bin/bash
 (
+
+# Query for autoidle service
+if monoset 127 whiptail --title "Idle Shutdown Service" --yesno "\
+Enable automatic idle shutdown?\n\n\
+* 5 minutes after last keypress\n\
+* Won't shut down if SSH connected\n\
+* Won't shut down running programs\n\n\
+Run \`man beepy-idle\` for user guide including editing \
+timeout, allowed programs, and enabling / disabling service\n\n\
+Press \`alt + enter\` to switch Yes/No" --defaultno 20 40; then
+	sudo systemctl enable beepy-idle.timer
+	sudo systemctl start beepy-idle.timer
+else
+	sudo systemctl disable beepy-idle.service
+	sudo systemctl disable beepy-idle.timer
+fi
+
+# nmtui information
+monoset 127 whiptail --title "Network Configuration" --msgbox "\
+Starting \`nmtui\` for network config\n\n\
+Use Meta mode arrow keys to select your network, and \
+Enter to select.\n\n
+* Hold the Berry key for Meta mode reference, \
+including arrow keys.\n\
+* Hold the Sym key for Symbol key reference.\n\
+* Press the Back key for Escape, to exit Meta mode, \
+and to exit \`nmtui\`
+" 20 40
+
 echo "Waiting for NetworkManager..."
 for i in $(seq 1 5); do
 	if systemctl --quiet is-active NetworkManager; then

@@ -12,6 +12,7 @@ cat << EOF >> ${ROOTFS_DIR}/etc/skel/.profile
 alias sudo="sudo "
 alias nmtui="monoset 127 nmtui"
 alias nmtui-connect="monoset 127 nmtui-connect"
+alias whiptail="monoset 127 whiptail"
 EOF
 
 on_chroot << EOF
