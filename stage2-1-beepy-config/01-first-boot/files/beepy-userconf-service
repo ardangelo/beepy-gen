@@ -58,13 +58,15 @@ fi
 # nmtui information
 monoset 127 whiptail --title "Network Configuration" --msgbox "\
 Starting \`nmtui\` for network config\n\n\
-Use Meta mode arrow keys to select your network, and \
+Use Up/Down arrow keys to highlight your network, and \
 Enter to select.\n\n
-* Hold the Berry key for Meta mode reference, \
-including arrow keys.\n\
-* Hold the Sym key for Symbol key reference.\n\
-* Press the Back key for Escape, to exit Meta mode, \
-and to exit \`nmtui\`
+* Hold the Berry key for Meta mode \n\
+  reference, including arrow keys.\n\
+* Hold the Sym key for Symbol key \n\
+  reference.\n\
+* Press the Back key for Escape,\n\
+  to exit Meta mode, and to exit\n\
+  nmtui.
 " 20 40
 
 echo "Waiting for NetworkManager..."
