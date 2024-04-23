@@ -39,6 +39,38 @@ cat > /etc/profile.d/zz-nmtui.sh << 'EOF'
 #!/bin/bash
 (
 
+# Key information
+monoset 127 whiptail --title "Typing symbols" --msgbox "\
+* For numbers or symbols printed on\n\
+  the keycaps, press Alt, then the\n\
+  letter key.\n\n\
+* For Tab, press Alt, then Enter.\n\n\
+* View the Symbol keymap by holding\n\
+  the Sym key for 1 second. To enter\n\
+  a symbol, press Sym, then the\n\
+  letter key.\n\n\
+For details on sticky modifier keys,\n\
+see the Beepy keyboard documentation\n\
+or run \`man beepy-kbd\`\
+" 20 40
+
+# Touch information
+monoset 127 whiptail --title "Meta mode and touchpad" --msgbox "\
+\"Meta mode\" is a modal layer to send\n\
+cursor keys and scroll.\n\n\
+* Hold the Berry key for 1 second\n\
+  to view the Meta mode keymap,\n\
+  including arrow keys.\n\
+* Press Back to exit Meta mode.\n\
+* Hold Shift for temporary touchpad\n\
+  until Shift released.\n\
+* Click touchpad for persistent \n\
+  touchpad until Back key pressed.\n\
+* While on, the touchpad sends\n\
+  arrow keys. Click again for Enter.\n\
+For more info: \`man beepy-kbd\`\
+" 20 40
+
 # Query for autoidle service
 if monoset 127 whiptail --title "Idle Shutdown Service" --yesno "\
 Enable automatic idle shutdown?\n\n\
@@ -47,7 +79,7 @@ Enable automatic idle shutdown?\n\n\
 * Won't shut down running programs\n\n\
 Run \`man beepy-idle\` for user guide including editing \
 timeout, allowed programs, and enabling / disabling service\n\n\
-Press \`alt + enter\` to switch Yes/No" --defaultno 20 40; then
+Press Alt + Enter to switch Yes/No" --defaultno 20 40; then
 	sudo systemctl enable beepy-idle.timer
 	sudo systemctl start beepy-idle.timer
 else
