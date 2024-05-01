@@ -58,6 +58,11 @@ set -g @menus_location_x 'R'
 set -g @menus_location_y 'T'
 EOF
 
+# Increase swap size
+( . ${ROOTFS_DIR}/etc/dphys-swapfile && if (( CONF_SWAPSIZE < 512 )); then \
+	sed -i 's/^CONF_SWAPSIZE=.*/CONF_SWAPSIZE=512/' ${ROOTFS_DIR}/etc/dphys-swapfile; \
+fi )
+
 on_chroot << EOF
 
 export POST_BOOT_SERVICES="avahi-daemon ModemManager networking NetworkManager sshswitch wpa_supplicant ssh dphys-swapfile triggerhappy"
