@@ -15,6 +15,14 @@ alias nmtui-connect="monoset 127 nmtui-connect"
 alias whiptail="monoset 127 whiptail"
 EOF
 
+# Set NetworkManager backend to iwd
+mkdir -p ${ROOTFS_DIR}/etc/NetworkManager/conf.d
+cat << EOF >> ${ROOTFS_DIR}/etc/NetworkManager/conf.d/wifi_backend.conf
+[device]
+wifi.backend=iwd
+wifi.iwd.autoconnect=yes
+EOF
+
 on_chroot << EOF
 
 # Add drivers repo
@@ -30,7 +38,7 @@ apt-get update
 
 # Install drivers and log2ram
 apt-get install -y \
-	beepy-fw beepy-kbd sharp-drm beepy-symbol-overlay log2ram
+	beepy-fw beepy-kbd sharp-drm beepy-symbol-overlay log2ram iwd impala-wifi
 
 # Install userspace
 apt-get install -y \
