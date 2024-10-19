@@ -31,11 +31,29 @@ HW_GID="$(getent group beepy_hw | cut -d: -f3)"
 sed -i "s/rootwait/quiet rootwait beepy-kbd.sysfs_gid=$HW_GID/" \
 	/boot/firmware/cmdline.txt
 
+# Default impala configuration
+mkdir -p /etc/skel/.config/impala/
+cat > /etc/skel/.config/impala/config.toml << EOF
+unicode = false
+monochrome = true
+
+[station]
+auto_scan = true
+EOF
+mkdir -p /root/.config/impala/
+cat > /root/.config/impala/config.toml << EOF
+unicode = false
+monochrome = true
+
+[station]
+auto_scan = true
+EOF
+
 # Copy default configs again
-su - $FIRST_USER -c "cp /etc/skel/.* ~/"
+su - $FIRST_USER -c "cp -r /etc/skel/.* ~/"
 
 # Add interactive setup to first boot
-cat > /etc/profile.d/zz-nmtui.sh << 'EOF'
+cat > /etc/profile.d/zz-interactive-firstboot.sh << 'EOF'
 #!/bin/bash
 (
 
@@ -87,32 +105,34 @@ else
 	sudo systemctl disable beepy-idle.timer
 fi
 
-# nmtui information
+# impala information
 monoset 127 whiptail --title "Network Configuration" --msgbox "\
-Starting \`nmtui\` for network config\n\n\
-Use Up/Down arrow keys to highlight your network, and \
-Enter to select.\n\n
+Starting \`impala\` for network config\n\n\
+Use arrow keys to move to New Nets tab and \
+to highlight your network, then Space to \
+start connecting.\n\n\
 * Hold the Berry key for Meta mode \n\
   reference, including arrow keys.\n\
 * Hold the Sym key for Symbol key \n\
   reference.\n\
 * Press the Back key for Escape,\n\
-  to exit Meta mode, and to exit\n\
-  nmtui.
+  or to exit Meta mode. \n\
+* Press Q to exit \`impala\`.\
 " 20 40
 
 echo "Waiting for NetworkManager..."
 for i in $(seq 1 5); do
 	if systemctl --quiet is-active NetworkManager; then
-		sudo monoset 127 nmtui-connect ||:
-		sudo rm -f /etc/profile.d/zz-nmtui.sh ||:
+		sudo impala ||:
+		sudo rm -f /etc/profile.d/zz-interactive-firstboot.sh ||:
 		exit 0
 	fi
 	sleep 1
 done
+
 )
 EOF
-chmod +x /etc/profile.d/zz-nmtui.sh
+chmod +x /etc/profile.d/zz-interactive-firstboot.sh
 
 # Expand root filesystem
 whiptail --infobox "Expanding root filesystem to fill SD card" 20 40
