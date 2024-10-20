@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 # Apply config patches
-patch "${ROOTFS_DIR}/boot/firmware/config.txt" files/config.patch
-patch "${ROOTFS_DIR}/boot/firmware/cmdline.txt" files/cmdline.patch
+patch -N "${ROOTFS_DIR}/boot/firmware/config.txt" files/config.patch
+patch -N "${ROOTFS_DIR}/boot/firmware/cmdline.txt" files/cmdline.patch
 
 # Install post-boot services
 install -m 755 files/config.toml    "${ROOTFS_DIR}/boot/"
@@ -11,6 +11,9 @@ install -m 644 files/load-brcmfmac.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/boot-firmware.mount	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 644 files/disable-cursor-blink.service	"${ROOTFS_DIR}/etc/systemd/system/"
 install -m 755 files/blacklist-brcmfmac.conf	"${ROOTFS_DIR}/etc/modprobe.d/"
+
+# Copy custom kernel packages
+install -m 644 files/linux-*.deb "${ROOTFS_DIR}/"
 
 # Remove MOTD on login
 sed -i '/^session .* pam_motd\.so .*/s/^/# /' \
@@ -118,5 +121,14 @@ systemctl disable rc-local
 chmod -x /etc/rc.local
 systemctl disable nss-user-lookup.target
 systemctl disable sshswitch
+
+# Install and configure custom Beepy kernel
+dpkg -i /linux-*.deb
+rm /linux-*.deb
+
+kernel=\$(ls /boot | grep -E 'vmlinuz-[0-9\.]+beepy-v7l\+')
+initrd=\$(ls /boot | grep -E 'initrd.img-[0-9\.]+beepy-v7l\+')
+sed -i "/disable_splash=1/a # Custom Beepy kernel\nkernel=\$kernel\ninitramfs \$initrd followkernel" \
+	/boot/firmware/config.txt
 
 EOF
