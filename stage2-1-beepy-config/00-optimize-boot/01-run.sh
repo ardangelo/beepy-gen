@@ -126,8 +126,8 @@ systemctl disable sshswitch
 dpkg -i /linux-*.deb
 rm /linux-*.deb
 
-kernel=\$(ls /boot | grep -E 'vmlinuz-[0-9\.]+beepy-v7l\+')
-initrd=\$(ls /boot | grep -E 'initrd.img-[0-9\.]+beepy-v7l\+')
+kernel=\$(ls /boot/firmware | grep -E 'vmlinuz-[0-9\.]+beepy-v7l\+')
+initrd=\$(ls /boot/firmware | grep -E 'initrd.img-[0-9\.]+beepy-v7l\+')
 sed -i "/disable_splash=1/a # Custom Beepy kernel\nkernel=\$kernel\ninitramfs \$initrd followkernel" \
 	/boot/firmware/config.txt
 
